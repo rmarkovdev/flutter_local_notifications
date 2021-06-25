@@ -317,6 +317,11 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'largeIcon': largeIcon.bitmap,
         'largeIconBitmapSource': AndroidBitmapSource.filePath.index,
       };
+    } else if (largeIcon is NetworkAndroidBitmap) {
+      return <String, Object>{
+        'largeIcon': largeIcon.bitmap,
+        'largeIconBitmapSource': AndroidBitmapSource.network.index,
+      };
     } else {
       return <String, Object>{};
     }
