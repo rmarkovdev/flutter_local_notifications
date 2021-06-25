@@ -55,6 +55,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -460,6 +461,14 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             bitmap = BitmapFactory.decodeResource(context.getResources(), getDrawableResourceId(context, bitmapPath));
         } else if (bitmapSource == BitmapSource.FilePath) {
             bitmap = BitmapFactory.decodeFile(bitmapPath);
+        } else if (bitmapSource == BitmapSource.NetworkPath) {
+            try {
+                InputStream in = new java.net.URL(bitmapPath).openStream();
+                bitmap = BitmapFactory.decodeStream(in);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
 
         return bitmap;
