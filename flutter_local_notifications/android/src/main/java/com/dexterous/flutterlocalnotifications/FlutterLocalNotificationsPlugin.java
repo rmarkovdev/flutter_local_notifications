@@ -19,6 +19,8 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.Handler;
+import android.os.Looper;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
@@ -160,7 +162,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
-    private static Notification createNotification(Context context, NotificationDetails notificationDetails) {
+    private static Notification createNotification(Context context, NotificationDetails notificationDetails, Bitmap largeImage) {
         setupNotificationChannel(context, NotificationChannelDetails.fromNotificationDetails(notificationDetails));
         Intent intent = getLaunchIntent(context);
         intent.setAction(SELECT_NOTIFICATION);
@@ -179,7 +181,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
         setSmallIcon(context, notificationDetails, builder);
         if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
-            builder.setLargeIcon(getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
+            builder.setLargeIcon(largeImage);
         }
         if (notificationDetails.color != null) {
             builder.setColor(notificationDetails.color.intValue());
@@ -796,15 +798,28 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return true;
     }
 
-    static void showNotification(Context context, NotificationDetails notificationDetails) {
-        Notification notification = createNotification(context, notificationDetails);
-        NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
+    static void showNotification(final Context context, final NotificationDetails notificationDetails) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final Bitmap largeIcon = getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Notification notification = createNotification(context, notificationDetails, largeIcon);
+                        NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
 
-        if (notificationDetails.tag != null) {
-            notificationManagerCompat.notify(notificationDetails.tag, notificationDetails.id, notification);
-        } else {
-            notificationManagerCompat.notify(notificationDetails.id, notification);
-        }
+                        if (notificationDetails.tag != null) {
+                            notificationManagerCompat.notify(notificationDetails.tag, notificationDetails.id, notification);
+                        } else {
+                            notificationManagerCompat.notify(notificationDetails.id, notification);
+                        }
+                    }
+                });
+
+            }
+        });
+
     }
 
     static void zonedScheduleNextNotification(Context context, NotificationDetails notificationDetails) {
