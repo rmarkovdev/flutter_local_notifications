@@ -818,7 +818,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 });
 
             }
-        });
+        }).start();
 
     }
 
