@@ -310,6 +310,7 @@ class AndroidFlutterLocalNotificationsPlugin
               a['channelId'],
               a['title'],
               a['body'],
+              a['groupKey'],
             ))
         ?.toList();
   }
