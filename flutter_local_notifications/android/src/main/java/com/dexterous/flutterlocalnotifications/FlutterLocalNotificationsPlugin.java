@@ -15,6 +15,14 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build.VERSION;
@@ -32,6 +40,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.Person;
 import androidx.core.graphics.drawable.IconCompat;
+import android.util.Log;
 
 import com.dexterous.flutterlocalnotifications.models.DateTimeComponents;
 import com.dexterous.flutterlocalnotifications.models.IconSource;
@@ -132,6 +141,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private Context applicationContext;
     private Activity mainActivity;
     private Intent launchIntent;
+    private static final HashMap personIcons = new HashMap<String, Bitmap>();
 
     public static void registerWith(Registrar registrar) {
         FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin();
@@ -476,6 +486,54 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return bitmap;
     }
 
+    private static Bitmap loadRoundBitmap(Bitmap bitmap) {
+        final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(output);
+
+        final int color = Color.RED;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawOval(rectF, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        bitmap.recycle();
+
+        return output;
+    }
+
+//    @TargetApi(Build.VERSION_CODES.P)
+//    private static Bitmap loadRoundBitmap(Bitmap bitmap) {
+//        if (bitmap != null) {
+//            try {
+//                Bitmap result = ImageDecoder.decodeBitmap(bitmap, (decoder, info, src) -> decoder.setPostProcessor((canvas) -> {
+//                    Path path = new Path();
+//                    path.setFillType(Path.FillType.INVERSE_EVEN_ODD);
+//                    int width = canvas.getWidth();
+//                    int height = canvas.getHeight();
+//                    path.addRoundRect(0, 0, width, height, width / 2, width / 2, Path.Direction.CW);
+//                    Paint paint = new Paint();
+//                    paint.setAntiAlias(true);
+//                    paint.setColor(Color.TRANSPARENT);
+//                    paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
+//                    canvas.drawPath(path, paint);
+//                    return PixelFormat.TRANSLUCENT;
+//                }));
+//                return result;
+//            } catch (Throwable ignore) {
+//                return null;
+//            }
+//        }
+//        return null;
+//    }
+
     private static IconCompat getIconFromSource(Context context, String iconPath, IconSource iconSource) {
         IconCompat icon = null;
         switch (iconSource) {
@@ -716,6 +774,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if (personDetails.uri != null) {
             personBuilder.setUri(personDetails.uri);
         }
+//        if (personDetails.iconUrl != null) {
+            final Bitmap bitmap = (Bitmap) personIcons.get(personDetails.iconUrl);
+        if (bitmap != null) {
+            IconCompat icon = IconCompat.createWithBitmap(bitmap);
+            personBuilder.setIcon(icon);
+        }
+//        }
         return personBuilder.build();
     }
 
@@ -802,7 +867,21 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final Bitmap largeIcon = getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource);
+                if (notificationDetails.style == NotificationStyle.Messaging) {
+                    MessagingStyleInformation messagingStyleInformation = (MessagingStyleInformation) notificationDetails.styleInformation;
+                    if (messagingStyleInformation.messages != null && !messagingStyleInformation.messages.isEmpty()) {
+                        for (MessageDetails messageDetails : messagingStyleInformation.messages) {
+                            final PersonDetails person = messageDetails.person;
+                            if (person.iconUrl != null && !personIcons.containsKey(person.iconUrl)) {
+                                Bitmap personIcon = getBitmapFromSource(context, person.iconUrl, BitmapSource.NetworkPath);
+                                if (personIcon != null) {
+                                    personIcons.put(person.iconUrl, loadRoundBitmap(personIcon));
+                                }
+                            }
+                        }
+                    }
+                }
+                final Bitmap largeIcon = (notificationDetails.largeIcon != null) ? getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource) : null;
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {

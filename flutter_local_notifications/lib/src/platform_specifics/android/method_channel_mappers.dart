@@ -26,7 +26,7 @@ extension MessageMapper on Message {
         'timestamp': timestamp.millisecondsSinceEpoch,
         'person': person?.toMap(),
         'dataMimeType': dataMimeType,
-        'dataUri': dataUri
+        'dataUri': dataUri,
       };
 }
 
@@ -83,7 +83,8 @@ extension PersonMapper on Person {
         'important': important,
         'key': key,
         'name': name,
-        'uri': uri
+        'uri': uri,
+        'iconUrl': iconUrl
       }..addAll(_convertIconToMap());
 
   Map<String, Object> _convertIconToMap() {

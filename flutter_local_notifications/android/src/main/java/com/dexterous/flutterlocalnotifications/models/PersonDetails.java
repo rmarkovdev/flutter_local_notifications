@@ -6,13 +6,14 @@ import androidx.annotation.Keep;
 public class PersonDetails {
     public Boolean bot;
     public String icon;
+    public String iconUrl;
     public IconSource iconBitmapSource;
     public Boolean important;
     public String key;
     public String name;
     public String uri;
 
-    public PersonDetails(Boolean bot, String icon, IconSource iconSource, Boolean important, String key, String name, String uri) {
+    public PersonDetails(Boolean bot, String icon, IconSource iconSource, Boolean important, String key, String name, String uri, String iconUrl) {
         this.bot = bot;
         this.icon = icon;
         this.iconBitmapSource = iconSource;
@@ -20,5 +21,6 @@ public class PersonDetails {
         this.key = key;
         this.name = name;
         this.uri = uri;
+        this.iconUrl = iconUrl;
     }
 }

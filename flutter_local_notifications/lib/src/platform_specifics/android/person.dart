@@ -10,6 +10,7 @@ class Person {
     this.key,
     this.name,
     this.uri,
+    this.iconUrl,
   });
 
   /// Whether or not this person represents a machine rather than a human.
@@ -29,4 +30,7 @@ class Person {
 
   /// Uri for this person.
   final String uri;
+
+  /// Uri for this person.
+  final String iconUrl;
 }
