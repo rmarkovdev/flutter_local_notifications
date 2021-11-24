@@ -1,3 +1,36 @@
+# [6.0.0]
+
+* Updated Flutter SDK constraint. To err on the safe side, this is why there's a major version bump for this release as the minimum version supported is 2.2
+* Updated Dart SDK constraint
+* Bumped mockito dependency
+* Addressed deprecation warnings that were appearing for Android builds
+* Updated API docs around the `tag` property associated with the `AndroidNotificationDetails` class
+
+# [5.0.0+4]
+
+* Fixed example app to re-add attributes to the Android app's `AndroidManifest.xml` to allow full-screen intent notifications to work
+
+# [5.0.0+3]
+
+* Updated readme on how to get the local timezone
+* Added link to location of example app to the readme
+
+# [5.0.0+2]
+
+* Updated example app to use the [flutter_native_timezone](https://pub.dev/packages/flutter_native_timezone) plugin to get the timezone
+* Updated readme to mention effect of using same notification id
+* Fixed wording and typo in full-screen intent notifications section of the readme. Thanks to PR from [Siddhartha Joshi](https://github.com/cimplesid)
+
+# [5.0.0+1]
+
+* Add link to explanation of the `onDidReceiveLocalNotification` callback to the initialisation section of the readme
+* Updated testing section to clarify behaviour on platforms that aren't supported
+* Updated `timezone` dependency
+
+# [5.0.0]
+
+* **Breaking change** migrated to null safety. Some arguments that were formerly null (e.g. some boolean values) are now non-nullable with a default value that should retain the old behaviour
+
 # [4.0.1+2]
 
 * [iOS/macOS] fixed issue where not requesting any permissions (i.e. all the boolean flags were set to false) would still cause a permissions prompt to appear. Thanks to the PR from [Andrey Parvatkin](https://github.com/badver)
