@@ -41,7 +41,6 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.Person;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.IconCompat;
-import android.util.Log;
 
 import com.dexterous.flutterlocalnotifications.models.BitmapSource;
 import com.dexterous.flutterlocalnotifications.models.DateTimeComponents;
@@ -158,7 +157,6 @@ public class FlutterLocalNotificationsPlugin
   private Activity mainActivity;
   private Intent launchIntent;
   private static final HashMap personIcons = new HashMap<String, Bitmap>();
-
 
   @SuppressWarnings("deprecation")
   public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
@@ -624,13 +622,12 @@ public class FlutterLocalNotificationsPlugin
       byte[] byteArray = castObjectToByteArray(data);
       bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
     } else if (bitmapSource == BitmapSource.NetworkPath) {
-        try {
-            InputStream in = new java.net.URL((String) data).openStream();
-            bitmap = BitmapFactory.decodeStream(in);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+      try {
+        InputStream in = new java.net.URL((String) data).openStream();
+        bitmap = BitmapFactory.decodeStream(in);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
 
     return bitmap;
@@ -947,8 +944,8 @@ public class FlutterLocalNotificationsPlugin
     if (personDetails.iconUrl != null) {
       final Bitmap bitmap = (Bitmap) personIcons.get(personDetails.iconUrl);
       if (bitmap != null) {
-          IconCompat icon = IconCompat.createWithBitmap(bitmap);
-          personBuilder.setIcon(icon);
+        IconCompat icon = IconCompat.createWithBitmap(bitmap);
+        personBuilder.setIcon(icon);
       }
     }
     return personBuilder.build();
@@ -1052,41 +1049,58 @@ public class FlutterLocalNotificationsPlugin
     return true;
   }
 
-  static void showNotification(final Context context, final NotificationDetails notificationDetails) {
-      new Thread(new Runnable() {
-          @Override
-          public void run() {
-              if (notificationDetails.style == NotificationStyle.Messaging) {
-                  MessagingStyleInformation messagingStyleInformation = (MessagingStyleInformation) notificationDetails.styleInformation;
-                  if (messagingStyleInformation.messages != null && !messagingStyleInformation.messages.isEmpty()) {
-                      for (MessageDetails messageDetails : messagingStyleInformation.messages) {
-                          final PersonDetails person = messageDetails.person;
-                          if (person.iconUrl != null && !personIcons.containsKey(person.iconUrl)) {
-                              Bitmap personIcon = getBitmapFromSource(context, person.iconUrl, BitmapSource.NetworkPath);
-                              if (personIcon != null) {
-                                  personIcons.put(person.iconUrl, loadRoundBitmap(personIcon));
-                              }
+  static void showNotification(
+      final Context context, final NotificationDetails notificationDetails) {
+    new Thread(
+            new Runnable() {
+              @Override
+              public void run() {
+                if (notificationDetails.style == NotificationStyle.Messaging) {
+                  MessagingStyleInformation messagingStyleInformation =
+                      (MessagingStyleInformation) notificationDetails.styleInformation;
+                  if (messagingStyleInformation.messages != null
+                      && !messagingStyleInformation.messages.isEmpty()) {
+                    for (MessageDetails messageDetails : messagingStyleInformation.messages) {
+                      final PersonDetails person = messageDetails.person;
+                      if (person.iconUrl != null && !personIcons.containsKey(person.iconUrl)) {
+                        Bitmap personIcon =
+                            getBitmapFromSource(context, person.iconUrl, BitmapSource.NetworkPath);
+                        if (personIcon != null) {
+                          personIcons.put(person.iconUrl, loadRoundBitmap(personIcon));
+                        }
+                      }
+                    }
+                  }
+                }
+                final Bitmap largeIcon =
+                    (notificationDetails.largeIcon != null)
+                        ? getBitmapFromSource(
+                            context,
+                            notificationDetails.largeIcon,
+                            notificationDetails.largeIconBitmapSource)
+                        : null;
+                new Handler(Looper.getMainLooper())
+                    .post(
+                        new Runnable() {
+                          @Override
+                          public void run() {
+                            Notification notification =
+                                createNotification(context, notificationDetails, largeIcon);
+                            NotificationManagerCompat notificationManagerCompat =
+                                getNotificationManager(context);
+
+                            if (notificationDetails.tag != null) {
+                              notificationManagerCompat.notify(
+                                  notificationDetails.tag, notificationDetails.id, notification);
+                            } else {
+                              notificationManagerCompat.notify(
+                                  notificationDetails.id, notification);
+                            }
                           }
-                      }
-                  }
+                        });
               }
-              final Bitmap largeIcon = (notificationDetails.largeIcon != null) ? getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource) : null;
-              new Handler(Looper.getMainLooper()).post(new Runnable() {
-                  @Override
-                  public void run() {
-                      Notification notification = createNotification(context, notificationDetails, largeIcon);
-                      NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
-
-                      if (notificationDetails.tag != null) {
-                          notificationManagerCompat.notify(notificationDetails.tag, notificationDetails.id, notification);
-                      } else {
-                          notificationManagerCompat.notify(notificationDetails.id, notification);
-                      }
-                  }
-              });
-
-          }
-      }).start();
+            })
+        .start();
   }
 
   static void zonedScheduleNextNotification(
@@ -1784,28 +1798,26 @@ public class FlutterLocalNotificationsPlugin
     result.success(null);
   }
 
-
   private static Bitmap loadRoundBitmap(Bitmap bitmap) {
-      final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
-              bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-      final Canvas canvas = new Canvas(output);
+    final Bitmap output =
+        Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+    final Canvas canvas = new Canvas(output);
 
-      final int color = Color.RED;
-      final Paint paint = new Paint();
-      final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-      final RectF rectF = new RectF(rect);
+    final int color = Color.RED;
+    final Paint paint = new Paint();
+    final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+    final RectF rectF = new RectF(rect);
 
-      paint.setAntiAlias(true);
-      canvas.drawARGB(0, 0, 0, 0);
-      paint.setColor(color);
-      canvas.drawOval(rectF, paint);
+    paint.setAntiAlias(true);
+    canvas.drawARGB(0, 0, 0, 0);
+    paint.setColor(color);
+    canvas.drawOval(rectF, paint);
 
-      paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-      canvas.drawBitmap(bitmap, rect, rect, paint);
+    paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+    canvas.drawBitmap(bitmap, rect, rect, paint);
 
-      bitmap.recycle();
+    bitmap.recycle();
 
-      return output;
+    return output;
   }
-
 }

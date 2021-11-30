@@ -23,7 +23,7 @@ public class PersonDetails implements Serializable {
       String key,
       String name,
       String uri,
-	  String iconUrl) {
+      String iconUrl) {
     this.bot = bot;
     this.icon = icon;
     this.iconBitmapSource = iconSource;
