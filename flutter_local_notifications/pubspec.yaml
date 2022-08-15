@@ -11,7 +11,10 @@ dependencies:
     sdk: flutter
   flutter_local_notifications_linux: ^0.3.0
   flutter_local_notifications_platform_interface:
-    path: flutter_local_notifications_platform_interface
+    git:
+      url: https://github.com/rmarkovdev/flutter_local_notifications.git
+      ref: network-icon
+      path: flutter_local_notifications_platform_interface
   timezone: ^0.8.0
 
 dev_dependencies:
