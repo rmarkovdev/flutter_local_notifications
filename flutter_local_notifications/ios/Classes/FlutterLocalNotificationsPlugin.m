@@ -21,9 +21,13 @@ NSString *const PERIODICALLY_SHOW_METHOD = @"periodicallyShow";
 NSString *const SHOW_DAILY_AT_TIME_METHOD = @"showDailyAtTime";
 NSString *const SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = @"showWeeklyAtDayAndTime";
 NSString *const CANCEL_METHOD = @"cancel";
+NSString *const CANCEL_DELIVERED_METHOD = @"cancelDelivered";
+
 NSString *const CANCEL_ALL_METHOD = @"cancelAll";
 NSString *const PENDING_NOTIFICATIONS_REQUESTS_METHOD =
     @"pendingNotificationRequests";
+NSString *const DELIVERED_NOTIFICATIONS_REQUESTS_METHOD =
+        @"deliveredNotificationRequests";
 NSString *const GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
     @"getNotificationAppLaunchDetails";
 NSString *const CHANNEL = @"dexterous.com/flutter/local_notifications";
@@ -148,6 +152,8 @@ static FlutterError *getFlutterError(NSError *error) {
     [self requestPermissions:call.arguments result:result];
   } else if ([CANCEL_METHOD isEqualToString:call.method]) {
     [self cancel:((NSNumber *)call.arguments) result:result];
+  } else if ([CANCEL_DELIVERED_METHOD isEqualToString:call.method]) {
+    [self cancelDelivered:((NSString *)call.arguments) result:result];
   } else if ([CANCEL_ALL_METHOD isEqualToString:call.method]) {
     [self cancelAll:result];
   } else if ([GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD
@@ -166,6 +172,9 @@ static FlutterError *getFlutterError(NSError *error) {
   } else if ([PENDING_NOTIFICATIONS_REQUESTS_METHOD
                  isEqualToString:call.method]) {
     [self pendingNotificationRequests:result];
+  } else if ([DELIVERED_NOTIFICATIONS_REQUESTS_METHOD
+                    isEqualToString:call.method]) {
+    [self deliveredUserNotificationRequests:result];
   } else {
     result(FlutterMethodNotImplemented);
   }
@@ -198,6 +207,34 @@ static FlutterError *getFlutterError(NSError *error) {
     }
     result(pendingNotificationRequests);
   }];
+}
+
+- (void)deliveredUserNotificationRequests:(FlutterResult _Nonnull)result
+    NS_AVAILABLE_IOS(10.0) {
+  UNUserNotificationCenter *center =
+        [UNUserNotificationCenter currentNotificationCenter];
+      [center getDeliveredNotificationsWithCompletionHandler:^(NSArray<UNNotification *> * _Nonnull notifications) {
+          NSMutableArray<NSMutableDictionary<NSString *, NSObject *> *>
+                  *pendingNotificationRequests =
+                      [[NSMutableArray alloc] initWithCapacity:[notifications count]];
+          for (UNNotification *notification in notifications) {
+            NSMutableDictionary *pendingNotificationRequest =
+                [[NSMutableDictionary alloc] init];
+            pendingNotificationRequest[ID] =
+              notification.request.identifier;
+            if (notification.request.content.title != nil) {
+              pendingNotificationRequest[TITLE] = notification.request.content.title;
+            }
+            if (notification.request.content.body != nil) {
+              pendingNotificationRequest[BODY] = notification.request.content.body;
+            }
+            if (notification.request.content.userInfo[PAYLOAD] != [NSNull null]) {
+              pendingNotificationRequest[PAYLOAD] = notification.request.content.userInfo[PAYLOAD];
+            }
+            [pendingNotificationRequests addObject:pendingNotificationRequest];
+          }
+          result(pendingNotificationRequests);
+      }];
 }
 
 - (void)pendingLocalNotificationRequests:(FlutterResult _Nonnull)result {
@@ -603,6 +640,16 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 }
 
+- (void)cancelDelivered:(NSString *)id result:(FlutterResult _Nonnull)result {
+  if (@available(iOS 10.0, *)) {
+    UNUserNotificationCenter *center =
+        [UNUserNotificationCenter currentNotificationCenter];
+    NSArray *idsToRemove =[[NSArray alloc] initWithObjects:id, nil];
+    [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
+  }
+  result(nil);
+}
+
 - (void)cancel:(NSNumber *)id result:(FlutterResult _Nonnull)result {
   if (@available(iOS 10.0, *)) {
     UNUserNotificationCenter *center =
@@ -869,6 +916,7 @@ static FlutterError *getFlutterError(NSError *error) {
     NS_AVAILABLE_IOS(10.0) {
   if (![self
           isAFlutterLocalNotification:notification.request.content.userInfo]) {
+    completionHandler(UNNotificationPresentationOptionNone);
     return;
   }
   UNNotificationPresentationOptions presentationOptions = 0;

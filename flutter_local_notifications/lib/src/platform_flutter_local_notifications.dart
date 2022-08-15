@@ -65,6 +65,22 @@ class MethodChannelFlutterLocalNotificationsPlugin
             .toList() ??
         <PendingNotificationRequest>[];
   }
+
+  @override
+  Future<List<DeliveredNotificationRequest>> deliveredNotificationRequests() async {
+    final List<Map<dynamic, dynamic>>? notifications =
+    await _channel.invokeListMethod('deliveredNotificationRequests');
+    return notifications
+    // ignore: always_specify_types
+        ?.map((p) => DeliveredNotificationRequest(
+        p['id'], p['title'], p['body'], p['payload']))
+        .toList() ??
+        <DeliveredNotificationRequest>[];
+  }
+
+  Future<void> cancelDelivered(String id) async {
+    return _channel.invokeMethod('cancelDelivered', id);
+  }
 }
 
 /// Android implementation of the local notifications plugin.
