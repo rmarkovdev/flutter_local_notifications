@@ -27,7 +27,7 @@ NSString *const CANCEL_ALL_METHOD = @"cancelAll";
 NSString *const PENDING_NOTIFICATIONS_REQUESTS_METHOD =
     @"pendingNotificationRequests";
 NSString *const DELIVERED_NOTIFICATIONS_REQUESTS_METHOD =
-        @"deliveredNotificationRequests";
+    @"deliveredNotificationRequests";
 NSString *const GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
     @"getNotificationAppLaunchDetails";
 NSString *const CHANNEL = @"dexterous.com/flutter/local_notifications";
@@ -173,7 +173,7 @@ static FlutterError *getFlutterError(NSError *error) {
                  isEqualToString:call.method]) {
     [self pendingNotificationRequests:result];
   } else if ([DELIVERED_NOTIFICATIONS_REQUESTS_METHOD
-                    isEqualToString:call.method]) {
+                 isEqualToString:call.method]) {
     [self deliveredUserNotificationRequests:result];
   } else {
     result(FlutterMethodNotImplemented);
@@ -212,29 +212,30 @@ static FlutterError *getFlutterError(NSError *error) {
 - (void)deliveredUserNotificationRequests:(FlutterResult _Nonnull)result
     NS_AVAILABLE_IOS(10.0) {
   UNUserNotificationCenter *center =
-        [UNUserNotificationCenter currentNotificationCenter];
-      [center getDeliveredNotificationsWithCompletionHandler:^(NSArray<UNNotification *> * _Nonnull notifications) {
-          NSMutableArray<NSMutableDictionary<NSString *, NSObject *> *>
-                  *pendingNotificationRequests =
-                      [[NSMutableArray alloc] initWithCapacity:[notifications count]];
-          for (UNNotification *notification in notifications) {
-            NSMutableDictionary *pendingNotificationRequest =
-                [[NSMutableDictionary alloc] init];
-            pendingNotificationRequest[ID] =
-              notification.request.identifier;
-            if (notification.request.content.title != nil) {
-              pendingNotificationRequest[TITLE] = notification.request.content.title;
-            }
-            if (notification.request.content.body != nil) {
-              pendingNotificationRequest[BODY] = notification.request.content.body;
-            }
-            if (notification.request.content.userInfo[PAYLOAD] != [NSNull null]) {
-              pendingNotificationRequest[PAYLOAD] = notification.request.content.userInfo[PAYLOAD];
-            }
-            [pendingNotificationRequests addObject:pendingNotificationRequest];
-          }
-          result(pendingNotificationRequests);
-      }];
+      [UNUserNotificationCenter currentNotificationCenter];
+  [center getDeliveredNotificationsWithCompletionHandler:^(
+              NSArray<UNNotification *> *_Nonnull notifications) {
+    NSMutableArray<NSMutableDictionary<NSString *, NSObject *> *>
+        *pendingNotificationRequests =
+            [[NSMutableArray alloc] initWithCapacity:[notifications count]];
+    for (UNNotification *notification in notifications) {
+      NSMutableDictionary *pendingNotificationRequest =
+          [[NSMutableDictionary alloc] init];
+      pendingNotificationRequest[ID] = notification.request.identifier;
+      if (notification.request.content.title != nil) {
+        pendingNotificationRequest[TITLE] = notification.request.content.title;
+      }
+      if (notification.request.content.body != nil) {
+        pendingNotificationRequest[BODY] = notification.request.content.body;
+      }
+      if (notification.request.content.userInfo[PAYLOAD] != [NSNull null]) {
+        pendingNotificationRequest[PAYLOAD] =
+            notification.request.content.userInfo[PAYLOAD];
+      }
+      [pendingNotificationRequests addObject:pendingNotificationRequest];
+    }
+    result(pendingNotificationRequests);
+  }];
 }
 
 - (void)pendingLocalNotificationRequests:(FlutterResult _Nonnull)result {
@@ -644,7 +645,7 @@ static FlutterError *getFlutterError(NSError *error) {
   if (@available(iOS 10.0, *)) {
     UNUserNotificationCenter *center =
         [UNUserNotificationCenter currentNotificationCenter];
-    NSArray *idsToRemove =[[NSArray alloc] initWithObjects:id, nil];
+    NSArray *idsToRemove = [[NSArray alloc] initWithObjects:id, nil];
     [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
   }
   result(nil);
