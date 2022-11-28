@@ -7,8 +7,9 @@ class ActiveNotification {
     this.channelId,
     this.title,
     this.body,
-    this.groupKey,
-  );
+    this.groupKey, {
+    this.tag,
+  });
 
   /// The notification's id.
   final int id;
@@ -23,6 +24,9 @@ class ActiveNotification {
 
   /// The notification's content.
   final String? body;
+
+  /// The notification's tag.
+  final String? tag;
 
   /// The notification's groupKey.
   final String? groupKey;

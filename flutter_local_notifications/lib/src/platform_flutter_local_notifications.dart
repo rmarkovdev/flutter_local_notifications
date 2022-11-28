@@ -420,6 +420,7 @@ class AndroidFlutterLocalNotificationsPlugin
               a['title'],
               a['body'],
               a['groupKey'],
+			  tag: a['tag'],
             ))
         .toList();
   }
@@ -450,6 +451,10 @@ class AndroidFlutterLocalNotificationsPlugin
             ))
         .toList();
   }
+
+  /// Returns whether notifications from the calling package are not blocked.
+  Future<bool?> areNotificationsEnabled() async =>
+      await _channel.invokeMethod<bool>('areNotificationsEnabled');
 
   AndroidNotificationSound? _getNotificationChannelSound(
       Map<dynamic, dynamic> channelMap) {

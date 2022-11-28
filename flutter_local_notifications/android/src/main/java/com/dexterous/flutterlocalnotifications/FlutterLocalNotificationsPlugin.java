@@ -104,6 +104,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
   private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
   private static final String INITIALIZE_METHOD = "initialize";
+  private static final String ARE_NOTIFICATIONS_ENABLED_METHOD = "areNotificationsEnabled";
   private static final String CREATE_NOTIFICATION_CHANNEL_GROUP_METHOD =
       "createNotificationChannelGroup";
   private static final String DELETE_NOTIFICATION_CHANNEL_GROUP_METHOD =
@@ -232,6 +233,10 @@ public class FlutterLocalNotificationsPlugin
       builder.setColor(notificationDetails.color.intValue());
     }
 
+    if (notificationDetails.colorized != null) {
+      builder.setColorized(notificationDetails.colorized);
+    }
+
     if (notificationDetails.showWhen != null) {
       builder.setShowWhen(BooleanUtils.getValue(notificationDetails.showWhen));
     }
@@ -356,26 +361,7 @@ public class FlutterLocalNotificationsPlugin
     SharedPreferences sharedPreferences =
         context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
     SharedPreferences.Editor editor = sharedPreferences.edit();
-    editor.putString(SCHEDULED_NOTIFICATIONS, json);
-    tryCommittingInBackground(editor, 3);
-  }
-
-  private static void tryCommittingInBackground(
-      final SharedPreferences.Editor editor, final int tries) {
-    if (tries == 0) {
-      return;
-    }
-    new Thread(
-            new Runnable() {
-              @Override
-              public void run() {
-                final boolean isCommitted = editor.commit();
-                if (!isCommitted) {
-                  tryCommittingInBackground(editor, tries - 1);
-                }
-              }
-            })
-        .start();
+    editor.putString(SCHEDULED_NOTIFICATIONS, json).apply();
   }
 
   static void removeNotificationFromCache(Context context, Integer notificationId) {
@@ -1338,6 +1324,9 @@ public class FlutterLocalNotificationsPlugin
       case PENDING_NOTIFICATION_REQUESTS_METHOD:
         pendingNotificationRequests(result);
         break;
+      case ARE_NOTIFICATIONS_ENABLED_METHOD:
+        areNotificationsEnabled(result);
+        break;
       case CREATE_NOTIFICATION_CHANNEL_GROUP_METHOD:
         createNotificationChannelGroup(call, result);
         break;
@@ -1460,8 +1449,7 @@ public class FlutterLocalNotificationsPlugin
     SharedPreferences sharedPreferences =
         applicationContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
     SharedPreferences.Editor editor = sharedPreferences.edit();
-    editor.putString(DEFAULT_ICON, defaultIcon);
-    tryCommittingInBackground(editor, 3);
+    editor.putString(DEFAULT_ICON, defaultIcon).apply();
     result.success(true);
   }
 
@@ -1679,6 +1667,7 @@ public class FlutterLocalNotificationsPlugin
         }
 
         activeNotificationPayload.put("groupKey", notification.getGroup());
+        activeNotificationPayload.put("tag", activeNotification.getTag());
         activeNotificationPayload.put(
             "title", notification.extras.getCharSequence("android.title"));
         activeNotificationPayload.put("body", notification.extras.getCharSequence("android.text"));
@@ -1796,6 +1785,11 @@ public class FlutterLocalNotificationsPlugin
   private void stopForegroundService(Result result) {
     applicationContext.stopService(new Intent(applicationContext, ForegroundService.class));
     result.success(null);
+  }
+
+  private void areNotificationsEnabled(Result result) {
+    NotificationManagerCompat notificationManager = getNotificationManager(applicationContext);
+    result.success(notificationManager.areNotificationsEnabled());
   }
 
   private static Bitmap loadRoundBitmap(Bitmap bitmap) {
