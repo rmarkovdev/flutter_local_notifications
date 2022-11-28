@@ -462,20 +462,19 @@ class AndroidFlutterLocalNotificationsPlugin
       _channel.invokeMethod('deleteNotificationChannel', channelId);
 
 
-  Future<List<ActiveNotification>?> getActiveNotifications() async {
+  Future<List<ActiveNotification>> getActiveNotifications() async {
     final List<Map<dynamic, dynamic>>? activeNotifications =
         await _channel.invokeListMethod('getActiveNotifications');
     return activeNotifications
         // ignore: always_specify_types
         ?.map((a) => ActiveNotification(
-              a['id'],
-              a['channelId'],
-              a['title'],
-              a['body'],
-              a['groupKey'],
+      id: a['id'],
+      channelId: a['channelId'],
+      title: a['title'],
+      body: a['body'],
+      groupKey: a['groupKey'],
 			  tag: a['tag'],
-            ))
-        .toList();
+            )).whereType<ActiveNotification>().toList() ?? [];
   }
 
   /// Returns the messaging style information of an active notification shown

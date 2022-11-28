@@ -13,7 +13,6 @@ dependencies:
       url: https://github.com/rmarkovdev/flutter_local_notifications.git
       ref: network-icon
       path: flutter_local_notifications_platform_interface
-  dbus: ^0.7.1
   path: ^1.8.0
   xdg_directories: ^0.2.0+1
 
