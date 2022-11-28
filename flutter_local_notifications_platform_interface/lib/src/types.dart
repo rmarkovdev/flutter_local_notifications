@@ -32,14 +32,31 @@ class PendingNotificationRequest {
   final String? payload;
 }
 
-/// Details of a pending notification that has not been delivered.
-class DeliveredNotificationRequest {
-  /// Constructs an instance of [PendingNotificationRequest].
-  const DeliveredNotificationRequest(
-      this.id, this.title, this.body, this.payload);
+/// Details of an active notification.
+class ActiveNotification {
+  /// Constructs an instance of [ActiveNotification].
+  const ActiveNotification({
+    required this.id,
+    this.groupKey,
+    this.channelId,
+    this.title,
+    this.body,
+    this.payload,
+    this.tag,
+  });
 
   /// The notification's id.
-  final String id;
+  final int id;
+
+  /// The notification's channel id.
+  ///
+  /// Returned only on Android 8.0 or newer.
+  final String? channelId;
+
+  /// The notification's group.
+  ///
+  /// Returned only on Android.
+  final String? groupKey;
 
   /// The notification's title.
   final String? title;
@@ -48,5 +65,66 @@ class DeliveredNotificationRequest {
   final String? body;
 
   /// The notification's payload.
+  ///
+  /// Returned only on iOS and macOS.
   final String? payload;
+
+  /// The notification's tag.
+  /// Returned only on Android.
+  final String? tag;
+}
+
+/// Details of a Notification Action that was triggered.
+class NotificationResponse {
+  /// Constructs an instance of [NotificationResponse]
+  const NotificationResponse({
+    required this.notificationResponseType,
+    this.id,
+    this.actionId,
+    this.input,
+    this.payload,
+  });
+
+  /// The notification's id.
+  ///
+  /// This is nullable as support for this only supported for notifications
+  /// created using version 10 or newer of this plugin.
+  final int? id;
+
+  /// The id of the action that was triggered.
+  final String? actionId;
+
+  /// The value of the input field if the notification action had an input
+  /// field.
+  final String? input;
+
+  /// The notification's payload.
+  final String? payload;
+
+  /// The notification response type.
+  final NotificationResponseType notificationResponseType;
+}
+
+/// Contains details on the notification that launched the application.
+class NotificationAppLaunchDetails {
+  /// Constructs an instance of [NotificationAppLaunchDetails].
+  const NotificationAppLaunchDetails(
+    this.didNotificationLaunchApp, {
+    this.notificationResponse,
+  });
+
+  /// Indicates if the app was launched via notification.
+  final bool didNotificationLaunchApp;
+
+  /// Contains details of the notification that launched the app.
+  final NotificationResponse? notificationResponse;
+}
+
+/// The possible notification response types
+enum NotificationResponseType {
+  /// Indicates that a user has selected a notification.
+  selectedNotification,
+
+  /// Indicates the a user has selected a notification action.
+  selectedNotificationAction,
 }
