@@ -5,6 +5,7 @@ export 'package:flutter_local_notifications_platform_interface/flutter_local_not
         DidReceiveNotificationResponseCallback,
         PendingNotificationRequest,
         ActiveNotification,
+        DeliveredNotificationRequest,
         RepeatInterval,
         NotificationAppLaunchDetails,
         NotificationResponse,

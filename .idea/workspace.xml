@@ -6,10 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d6cc3164-975f-4dd6-943d-2b5d8a69fd15" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flutter_local_notifications/ios/Classes/FlutterLocalNotificationsPlugin.m" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_local_notifications/ios/Classes/FlutterLocalNotificationsPlugin.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flutter_local_notifications/lib/src/platform_flutter_local_notifications.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_local_notifications/lib/src/platform_flutter_local_notifications.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flutter_local_notifications_platform_interface/lib/flutter_local_notifications_platform_interface.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_local_notifications_platform_interface/lib/flutter_local_notifications_platform_interface.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flutter_local_notifications_platform_interface/lib/src/types.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_local_notifications_platform_interface/lib/src/types.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_local_notifications/lib/flutter_local_notifications.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_local_notifications/lib/flutter_local_notifications.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
