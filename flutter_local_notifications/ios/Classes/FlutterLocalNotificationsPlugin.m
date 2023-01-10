@@ -244,7 +244,8 @@ static FlutterError *getFlutterError(NSError *error) {
     for (UNNotification *notification in notifications) {
       NSMutableDictionary *activeNotification =
           [[NSMutableDictionary alloc] init];
-      activeNotification[ID] = notification.request.identifier;
+      activeNotification[ID] =
+          notification.request.content.userInfo[NOTIFICATION_ID];
       if (notification.request.content.title != nil) {
         activeNotification[TITLE] = notification.request.content.title;
       }
@@ -382,6 +383,34 @@ static FlutterError *getFlutterError(NSError *error) {
                                message:GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE
                                details:nil]);
   }
+}
+
+- (void)deliveredUserNotificationRequests:(FlutterResult _Nonnull)result
+    NS_AVAILABLE_IOS(10.0) {
+  UNUserNotificationCenter *center =
+        [UNUserNotificationCenter currentNotificationCenter];
+      [center getDeliveredNotificationsWithCompletionHandler:^(NSArray<UNNotification *> * _Nonnull notifications) {
+          NSMutableArray<NSMutableDictionary<NSString *, NSObject *> *>
+                  *pendingNotificationRequests =
+                      [[NSMutableArray alloc] initWithCapacity:[notifications count]];
+          for (UNNotification *notification in notifications) {
+            NSMutableDictionary *pendingNotificationRequest =
+                [[NSMutableDictionary alloc] init];
+            pendingNotificationRequest[ID] =
+              notification.request.identifier;
+            if (notification.request.content.title != nil) {
+              pendingNotificationRequest[TITLE] = notification.request.content.title;
+            }
+            if (notification.request.content.body != nil) {
+              pendingNotificationRequest[BODY] = notification.request.content.body;
+            }
+            if (notification.request.content.userInfo[PAYLOAD] != [NSNull null]) {
+              pendingNotificationRequest[PAYLOAD] = notification.request.content.userInfo[PAYLOAD];
+            }
+            [pendingNotificationRequests addObject:pendingNotificationRequest];
+          }
+          result(pendingNotificationRequests);
+      }];
 }
 
 - (void)initialize:(NSDictionary *_Nonnull)arguments
