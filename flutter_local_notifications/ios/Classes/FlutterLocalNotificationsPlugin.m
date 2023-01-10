@@ -388,29 +388,30 @@ static FlutterError *getFlutterError(NSError *error) {
 - (void)deliveredUserNotificationRequests:(FlutterResult _Nonnull)result
     NS_AVAILABLE_IOS(10.0) {
   UNUserNotificationCenter *center =
-        [UNUserNotificationCenter currentNotificationCenter];
-      [center getDeliveredNotificationsWithCompletionHandler:^(NSArray<UNNotification *> * _Nonnull notifications) {
-          NSMutableArray<NSMutableDictionary<NSString *, NSObject *> *>
-                  *pendingNotificationRequests =
-                      [[NSMutableArray alloc] initWithCapacity:[notifications count]];
-          for (UNNotification *notification in notifications) {
-            NSMutableDictionary *pendingNotificationRequest =
-                [[NSMutableDictionary alloc] init];
-            pendingNotificationRequest[ID] =
-              notification.request.identifier;
-            if (notification.request.content.title != nil) {
-              pendingNotificationRequest[TITLE] = notification.request.content.title;
-            }
-            if (notification.request.content.body != nil) {
-              pendingNotificationRequest[BODY] = notification.request.content.body;
-            }
-            if (notification.request.content.userInfo[PAYLOAD] != [NSNull null]) {
-              pendingNotificationRequest[PAYLOAD] = notification.request.content.userInfo[PAYLOAD];
-            }
-            [pendingNotificationRequests addObject:pendingNotificationRequest];
-          }
-          result(pendingNotificationRequests);
-      }];
+      [UNUserNotificationCenter currentNotificationCenter];
+  [center getDeliveredNotificationsWithCompletionHandler:^(
+              NSArray<UNNotification *> *_Nonnull notifications) {
+    NSMutableArray<NSMutableDictionary<NSString *, NSObject *> *>
+        *pendingNotificationRequests =
+            [[NSMutableArray alloc] initWithCapacity:[notifications count]];
+    for (UNNotification *notification in notifications) {
+      NSMutableDictionary *pendingNotificationRequest =
+          [[NSMutableDictionary alloc] init];
+      pendingNotificationRequest[ID] = notification.request.identifier;
+      if (notification.request.content.title != nil) {
+        pendingNotificationRequest[TITLE] = notification.request.content.title;
+      }
+      if (notification.request.content.body != nil) {
+        pendingNotificationRequest[BODY] = notification.request.content.body;
+      }
+      if (notification.request.content.userInfo[PAYLOAD] != [NSNull null]) {
+        pendingNotificationRequest[PAYLOAD] =
+            notification.request.content.userInfo[PAYLOAD];
+      }
+      [pendingNotificationRequests addObject:pendingNotificationRequest];
+    }
+    result(pendingNotificationRequests);
+  }];
 }
 
 - (void)initialize:(NSDictionary *_Nonnull)arguments
