@@ -494,6 +494,11 @@ class AndroidFlutterLocalNotificationsPlugin
             )).whereType<ActiveNotification>().toList() ?? [];
   }
 
+  @override
+  Future<List<DeliveredNotificationRequest>> deliveredNotificationRequests() async {
+    return [];
+  }
+
   /// Returns the messaging style information of an active notification shown
   /// by the application that hasn't been dismissed/removed.
   ///

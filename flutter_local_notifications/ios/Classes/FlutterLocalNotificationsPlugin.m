@@ -30,6 +30,8 @@ NSString *const SHOW_DAILY_AT_TIME_METHOD = @"showDailyAtTime";
 NSString *const SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = @"showWeeklyAtDayAndTime";
 NSString *const CANCEL_METHOD = @"cancel";
 NSString *const CANCEL_DELIVERED_METHOD = @"cancelDelivered";
+NSString *const DELIVERED_NOTIFICATIONS_REQUESTS_METHOD =
+        @"deliveredNotificationRequests";
 
 NSString *const CANCEL_ALL_METHOD = @"cancelAll";
 NSString *const PENDING_NOTIFICATIONS_REQUESTS_METHOD =
@@ -198,7 +200,10 @@ static FlutterError *getFlutterError(NSError *error) {
     [self pendingNotificationRequests:result];
   } else if ([GET_ACTIVE_NOTIFICATIONS_METHOD isEqualToString:call.method]) {
     [self getActiveNotifications:result];
-  } else {
+  } else if ([DELIVERED_NOTIFICATIONS_REQUESTS_METHOD
+                        isEqualToString:call.method]) {
+        [self deliveredUserNotificationRequests:result];
+   } else {
     result(FlutterMethodNotImplemented);
   }
 }

@@ -519,4 +519,8 @@ class FlutterLocalNotificationsPlugin {
   /// Returns a list of notifications that are already delivered/shown.
   Future<List<ActiveNotification>> getActiveNotifications() =>
       FlutterLocalNotificationsPlatform.instance.getActiveNotifications();
+
+  /// Returns a list of notifications that are already delivered/shown.
+  Future<List<DeliveredNotificationRequest>> deliveredNotificationRequests() =>
+      FlutterLocalNotificationsPlatform.instance.deliveredNotificationRequests();
 }
