@@ -6,12 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d6cc3164-975f-4dd6-943d-2b5d8a69fd15" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flutter_local_notifications/ios/Classes/FlutterLocalNotificationsPlugin.m" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_local_notifications/ios/Classes/FlutterLocalNotificationsPlugin.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flutter_local_notifications/lib/flutter_local_notifications.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_local_notifications/lib/flutter_local_notifications.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flutter_local_notifications/lib/src/flutter_local_notifications_plugin.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_local_notifications/lib/src/flutter_local_notifications_plugin.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flutter_local_notifications/lib/src/platform_flutter_local_notifications.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_local_notifications/lib/src/platform_flutter_local_notifications.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flutter_local_notifications/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_local_notifications/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flutter_local_notifications_linux/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_local_notifications_linux/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_local_notifications/android/src/main/java/com/dexterous/flutterlocalnotifications/FlutterLocalNotificationsPlugin.java" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_local_notifications/android/src/main/java/com/dexterous/flutterlocalnotifications/FlutterLocalNotificationsPlugin.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,9 +25,9 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/flutter_local_notifications/ios/Classes/FlutterLocalNotificationsPlugin.m" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/flutter_local_notifications/ios/Classes/FlutterLocalNotificationsPlugin.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/README.md" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/flutter_local_notifications/ios/Classes/FlutterLocalNotificationsPlugin.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/flutter_local_notifications/ios/Classes/FlutterLocalNotificationsPlugin.m" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -42,16 +37,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
-    <property name="cidr.known.project.marker" value="true" />
-    <property name="dart.analysis.tool.window.visible" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="dart.settings" />
-    <property name="show.migrate.to.gradle.popup" value="false" />
-  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+  }
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/flutter_local_notifications/ios/Classes" />

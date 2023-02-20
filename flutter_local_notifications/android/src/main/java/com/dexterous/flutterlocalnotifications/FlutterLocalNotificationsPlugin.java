@@ -2039,24 +2039,33 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private static Bitmap loadRoundBitmap(Bitmap bitmap) {
-    final Bitmap output =
-        Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-    final Canvas canvas = new Canvas(output);
+    Bitmap sbmp;
+    final int radius = bitmap.getWidth() < bitmap.getHeight() ? bitmap.getWidth() : bitmap.getHeight();
+    if (bitmap.getWidth() != radius || bitmap.getHeight() != radius) {
+      float smallest = Math.min(bitmap.getWidth(), bitmap.getHeight());
+      float factor = smallest / radius;
+      sbmp = Bitmap.createScaledBitmap(bitmap,
+              (int) (bitmap.getWidth() / factor),
+              (int) (bitmap.getHeight() / factor), false);
+    } else {
+      sbmp = bitmap;
+    }
 
-    final int color = Color.RED;
+    Bitmap output = Bitmap.createBitmap(radius, radius, Bitmap.Config.ARGB_8888);
+    Canvas canvas = new Canvas(output);
+
     final Paint paint = new Paint();
-    final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-    final RectF rectF = new RectF(rect);
+    final Rect rect = new Rect(0, 0, radius, radius);
 
     paint.setAntiAlias(true);
+    paint.setFilterBitmap(true);
+    paint.setDither(true);
     canvas.drawARGB(0, 0, 0, 0);
-    paint.setColor(color);
-    canvas.drawOval(rectF, paint);
-
+    paint.setColor(Color.LTGRAY);
+    canvas.drawCircle(radius / 2 + 0.7f, radius / 2 + 0.7f,
+            radius / 2 + 0.1f, paint);
     paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-    canvas.drawBitmap(bitmap, rect, rect, paint);
-
-    bitmap.recycle();
+    canvas.drawBitmap(sbmp, rect, rect, paint);
 
     return output;
   }
