@@ -24,7 +24,6 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -2040,13 +2039,17 @@ public class FlutterLocalNotificationsPlugin
 
   private static Bitmap loadRoundBitmap(Bitmap bitmap) {
     Bitmap sbmp;
-    final int radius = bitmap.getWidth() < bitmap.getHeight() ? bitmap.getWidth() : bitmap.getHeight();
+    final int radius =
+        bitmap.getWidth() < bitmap.getHeight() ? bitmap.getWidth() : bitmap.getHeight();
     if (bitmap.getWidth() != radius || bitmap.getHeight() != radius) {
       float smallest = Math.min(bitmap.getWidth(), bitmap.getHeight());
       float factor = smallest / radius;
-      sbmp = Bitmap.createScaledBitmap(bitmap,
+      sbmp =
+          Bitmap.createScaledBitmap(
+              bitmap,
               (int) (bitmap.getWidth() / factor),
-              (int) (bitmap.getHeight() / factor), false);
+              (int) (bitmap.getHeight() / factor),
+              false);
     } else {
       sbmp = bitmap;
     }
@@ -2062,8 +2065,7 @@ public class FlutterLocalNotificationsPlugin
     paint.setDither(true);
     canvas.drawARGB(0, 0, 0, 0);
     paint.setColor(Color.LTGRAY);
-    canvas.drawCircle(radius / 2 + 0.7f, radius / 2 + 0.7f,
-            radius / 2 + 0.1f, paint);
+    canvas.drawCircle(radius / 2 + 0.7f, radius / 2 + 0.7f, radius / 2 + 0.1f, paint);
     paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
     canvas.drawBitmap(sbmp, rect, rect, paint);
 
